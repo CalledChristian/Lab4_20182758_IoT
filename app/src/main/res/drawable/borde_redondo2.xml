@@ -1,0 +1,9 @@
+<!-- Basado en gpt-->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="#B2F3FB"/>
+    <corners android:radius="8dp" />
+    <stroke
+        android:width="20dp"
+        android:color="#B2F3FB"/>
+</shape>

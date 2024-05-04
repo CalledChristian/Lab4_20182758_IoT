@@ -2,6 +2,8 @@ package com.example.lab4_iot_of;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
@@ -49,7 +51,15 @@ public class GeolocalizacionFragment extends Fragment {
 
     private Button buscarButton;
 
+    private int scrollPosition = 0;
+
+
+    private GeolocalizacionAdapter geoAdapter;
+
     private List<Geolocalizacion> listaGeo = new ArrayList<>();
+
+    private LinearLayoutManager layoutManager;
+
 
 
 
@@ -113,14 +123,13 @@ public class GeolocalizacionFragment extends Fragment {
 
         //recyclerView = getActivity().findViewById(R.id.recyclerview_geolocalizacion);
 
-        GeolocalizacionAdapter geoAdapter = new GeolocalizacionAdapter();
+        geoAdapter = new GeolocalizacionAdapter();
 
         GeolocalizationInterface geolocalizationInterface = new Retrofit.Builder()
                 .baseUrl("https://api.openweathermap.org")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
                 .create(GeolocalizationInterface.class);
-
         //inicio
         binding.button2.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -133,9 +142,7 @@ public class GeolocalizacionFragment extends Fragment {
                             if (response.isSuccessful()) {
                                 List<Geolocalizacion> lista = response.body();
                                 Geolocalizacion geo = lista.get(0);
-                                /*Log.d("msg-test3",geo.getCiudad());
-                                Log.d("msg-test3", String.valueOf(geo.getLatitud()));
-                                Log.d("msg-test3", String.valueOf(geo.getLongitud()));*/
+
                                 listaGeo.add(geo);
                                 geoAdapter.setContext(getContext());
                                 geoAdapter.setListaGeo(listaGeo);
@@ -154,7 +161,7 @@ public class GeolocalizacionFragment extends Fragment {
 
                     });
                 } else {
-                    Toast.makeText(getActivity(), "Ingrese una ciudad", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "Ingrese una ciudad", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -165,13 +172,95 @@ public class GeolocalizacionFragment extends Fragment {
             navController.navigate(R.id.action_geolocalizacionFragment_to_climaFragment);
         });
 
-            // Inflate the layout for this fragment
+        /*layoutManager = new LinearLayoutManager(requireContext());
+        binding.recyclerviewGeolocalizacion.setLayoutManager(layoutManager);
+
+        // Restaurar la posición de desplazamiento si hay un estado guardado
+        if (savedInstanceState != null) {
+            scrollPosition = savedInstanceState.getInt("scroll_position", 0);
+        }*/
+
+
+        // Inflate the layout for this fragment
         return binding.getRoot();
 
-        /*Button goclima = findViewById(R.id.button4);
+        }
 
-        goclima.setOnClickListener( view -> {*/
+        /*@Override
+        public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+            super.onViewCreated(view, savedInstanceState);
+
+            layoutManager = new LinearLayoutManager(requireContext());
+            binding.recyclerviewGeolocalizacion.setLayoutManager(layoutManager);
+
+            // Restaurar la posición de desplazamiento si hay un estado guardado
+            if (savedInstanceState != null) {
+                scrollPosition = savedInstanceState.getInt("scroll_position", 0);
+            }
+
+
+            geoAdapter = new GeolocalizacionAdapter();
+
+            GeolocalizationInterface geolocalizationInterface = new Retrofit.Builder()
+                    .baseUrl("https://api.openweathermap.org")
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build()
+                    .create(GeolocalizationInterface.class);
+
+
+            binding.button2.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (binding.editTextText2 != null) {
+                        ciudadStr = binding.editTextText2.getEditableText().toString();
+                        geolocalizationInterface.getGeolocalizacion(ciudadStr, "1", "8dd6fc3be19ceb8601c2c3e811c16cf1").enqueue(new Callback<List<Geolocalizacion>>() {
+                            @Override
+                            public void onResponse(Call<List<Geolocalizacion>> call, Response<List<Geolocalizacion>> response) {
+                                if (response.isSuccessful()) {
+                                    List<Geolocalizacion> lista = response.body();
+                                    Geolocalizacion geo = lista.get(0)
+                                    listaGeo.add(geo);
+                                    geoAdapter.setContext(getContext());
+                                    geoAdapter.setListaGeo(listaGeo);
+                                    binding.recyclerviewGeolocalizacion.setAdapter(geoAdapter);
+                                    binding.recyclerviewGeolocalizacion.setLayoutManager(new LinearLayoutManager(getContext()));
+
+                                } else {
+                                    Log.d("msg-test", "error en la respuesta del webservice");
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(Call<List<Geolocalizacion>> call, Throwable t) {
+                                t.printStackTrace();
+                            }
+
+                        });
+                    } else {
+                        Toast.makeText(getContext(), "Ingrese una ciudad", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+
 
         }
+
+        @Override
+        public void onResume() {
+            super.onResume();
+
+            // Restaurar la posición de desplazamiento cuando el fragmento se vuelve visible
+            binding.recyclerviewGeolocalizacion.scrollToPosition(scrollPosition);
+        }
+
+        @Override
+        public void onSaveInstanceState(@NonNull Bundle outState) {
+            super.onSaveInstanceState(outState);
+
+            // Guardar la posición de desplazamiento cuando el fragmento se destruye
+            outState.putInt("scroll_position", layoutManager.findFirstVisibleItemPosition());
+        }*/
+
+
 
 }

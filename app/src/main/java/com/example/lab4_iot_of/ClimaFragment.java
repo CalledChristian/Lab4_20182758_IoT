@@ -113,21 +113,23 @@ public class ClimaFragment extends Fragment {
                 .create(ClimaInterface.class);
 
         //inicio
+
+        latitudStr = binding.editTextText.getEditableText().toString();
+        longitudStr = binding.editTextText2.getEditableText().toString();
         binding.button5.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View v) {
-                if (binding.editTextText != null && binding.editTextText2 != null ) {
-                    latitudStr = binding.editTextText.getEditableText().toString();
-                    longitudStr = binding.editTextText2.getEditableText().toString();
-                    climaInterface.getClima(latitudStr, longitudStr, "792edf06f1f5ebcaf43632b55d8b03fe").enqueue(new Callback<List<Clima>>() {
+                    climaInterface.getClima(latitudStr, longitudStr, "792edf06f1f5ebcaf43632b55d8b03fe").enqueue(new Callback<Clima>(){
                         @Override
-                        public void onResponse(Call<List<Clima>> call, Response<List<Clima>> response) {
+                        public void onResponse(Call<Clima> call, Response<Clima> response) {
                             if (response.isSuccessful()) {
-                                List<Clima> lista = response.body();
-                                Clima clima = lista.get(0);
                                 /*Log.d("msg-test3",geo.getCiudad());
+
                                 Log.d("msg-test3", String.valueOf(geo.getLatitud()));
                                 Log.d("msg-test3", String.valueOf(geo.getLongitud()));*/
+                                Clima clima = response.body();
+                                Log.d("msg-test2", String.valueOf(clima.getMain().getTemperatura()));
                                 listaClima.add(clima);
                                 climaAdapter.setContext(getContext());
                                 climaAdapter.setListaClima(listaClima);
@@ -140,14 +142,12 @@ public class ClimaFragment extends Fragment {
                         }
 
                         @Override
-                        public void onFailure(Call<List<Clima>> call, Throwable t) {
+                        public void onFailure(Call<Clima> call, Throwable t) {
                             t.printStackTrace();
                         }
 
                     });
-                } else {
-                    Toast.makeText(getActivity(), "Ingrese una ciudad", Toast.LENGTH_SHORT).show();
-                }
+
             }
         });
 

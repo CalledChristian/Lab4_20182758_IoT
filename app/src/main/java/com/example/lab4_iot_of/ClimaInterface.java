@@ -13,9 +13,9 @@ public interface ClimaInterface {
 
 
     @GET("/data/2.5/weather")
-    Call<List<Clima>> getClima (@Query("lat") String latitud,
+    Call<Clima> getClima (@Query("lat") String latitud,
                                 @Query("lon") String longitud,
-                                @Query("appid") String apikey);
+                              @Query("appid") String apikey);
 
 
 }

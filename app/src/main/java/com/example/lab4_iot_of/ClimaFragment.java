@@ -114,12 +114,16 @@ public class ClimaFragment extends Fragment {
 
         //inicio
 
-        latitudStr = binding.editTextText.getEditableText().toString();
-        longitudStr = binding.editTextText2.getEditableText().toString();
         binding.button5.setOnClickListener(new View.OnClickListener() {
+
 
             @Override
             public void onClick(View v) {
+                    latitudStr = binding.editTextText4.getEditableText().toString();
+                    longitudStr = binding.editTextText5.getEditableText().toString();
+                    Log.d("msg-test4",latitudStr);
+                    Log.d("msg-test4",longitudStr);
+
                     climaInterface.getClima(latitudStr, longitudStr, "792edf06f1f5ebcaf43632b55d8b03fe").enqueue(new Callback<Clima>(){
                         @Override
                         public void onResponse(Call<Clima> call, Response<Clima> response) {
@@ -129,7 +133,6 @@ public class ClimaFragment extends Fragment {
                                 Log.d("msg-test3", String.valueOf(geo.getLatitud()));
                                 Log.d("msg-test3", String.valueOf(geo.getLongitud()));*/
                                 Clima clima = response.body();
-                                Log.d("msg-test2", String.valueOf(clima.getMain().getTemperatura()));
                                 listaClima.add(clima);
                                 climaAdapter.setContext(getContext());
                                 climaAdapter.setListaClima(listaClima);

@@ -4,18 +4,18 @@ import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 
-public class Geolocalizacion implements Serializable {
+public class Geolocalizacion {
 
-    @SerializedName("name")
-    private String ciudad;
+    //@SerializedName("name")
+    private String name;
 
-    @SerializedName("lat")
-    private float latitud;
+    //@SerializedName("lat")
+    private float lat;
 
-    @SerializedName("lon")
-    private float longitud;
+    //@SerializedName("lon")
+    private float lon;
 
-    public String getCiudad() {
+    /*public String getCiudad() {
         return ciudad;
     }
 
@@ -37,5 +37,29 @@ public class Geolocalizacion implements Serializable {
 
     public void setLongitud(float longitud) {
         this.longitud = longitud;
+    }*/
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public float getLat() {
+        return lat;
+    }
+
+    public void setLat(float lat) {
+        this.lat = lat;
+    }
+
+    public float getLon() {
+        return lon;
+    }
+
+    public void setLon(float lon) {
+        this.lon = lon;
     }
 }

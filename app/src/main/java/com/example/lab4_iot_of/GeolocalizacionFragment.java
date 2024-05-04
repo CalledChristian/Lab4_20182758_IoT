@@ -19,7 +19,9 @@ import android.widget.Toast;
 
 import com.example.lab4_iot_of.adapter.GeolocalizacionAdapter;
 import com.example.lab4_iot_of.bean.Geolocalizacion;
+import com.example.lab4_iot_of.databinding.FragmentGeolocalizacionBinding;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -47,9 +49,13 @@ public class GeolocalizacionFragment extends Fragment {
 
     private Button buscarButton;
 
-    private List<Geolocalizacion> listaGeolocalizacion;
+    private List<Geolocalizacion> listaGeo = new ArrayList<>();
+
+
 
     private RecyclerView recyclerView;
+
+    private FragmentGeolocalizacionBinding binding;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -90,14 +96,23 @@ public class GeolocalizacionFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
+        binding = FragmentGeolocalizacionBinding.inflate(inflater,container,false);
+
+
+
+
+        Log.d("msg-test2","ingresa a fragment");
+
 
         NavController navController = NavHostFragment.findNavController(GeolocalizacionFragment.this);
 
 
-        ciudad = getActivity().findViewById(R.id.editTextText2);
-        ciudadStr = ciudad.getEditableText().toString();
-        buscarButton = getActivity().findViewById(R.id.button2);
-        recyclerView = getActivity().findViewById(R.id.recyclerview_geolocalizacion);
+        // ciudad = getActivity().findViewById(R.id.editTextText2);
+
+        //buscarButton = getActivity().findViewById(R.id.button2);
+
+        //recyclerView = getActivity().findViewById(R.id.recyclerview_geolocalizacion);
+
         GeolocalizacionAdapter geoAdapter = new GeolocalizacionAdapter();
 
         GeolocalizationInterface geolocalizationInterface = new Retrofit.Builder()
@@ -107,47 +122,51 @@ public class GeolocalizacionFragment extends Fragment {
                 .create(GeolocalizationInterface.class);
 
         //inicio
-        buscarButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (!ciudadStr.isEmpty()) {
-                        geolocalizationInterface.getGeolocalizacion(ciudadStr, "1", "8dd6fc3be19ceb8601c2c3e811c16cf1").enqueue(new Callback<List<Geolocalizacion>>() {
-                            @Override
-                            public void onResponse(Call<List<Geolocalizacion>> call, Response<List<Geolocalizacion>> response) {
-                                if (response.isSuccessful()) {
-                                    List<Geolocalizacion> lista = response.body();
-                                    geoAdapter.setContext(getActivity());
-                                    geoAdapter.setListaGeo(lista);
-                                    recyclerView.setAdapter(geoAdapter);
-                                    recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        binding.button2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (binding.editTextText2 != null) {
+                    ciudadStr = binding.editTextText2.getEditableText().toString();
+                    geolocalizationInterface.getGeolocalizacion(ciudadStr, "1", "8dd6fc3be19ceb8601c2c3e811c16cf1").enqueue(new Callback<List<Geolocalizacion>>() {
+                        @Override
+                        public void onResponse(Call<List<Geolocalizacion>> call, Response<List<Geolocalizacion>> response) {
+                            if (response.isSuccessful()) {
+                                List<Geolocalizacion> lista = response.body();
+                                Geolocalizacion geo = lista.get(0);
+                                /*Log.d("msg-test3",geo.getCiudad());
+                                Log.d("msg-test3", String.valueOf(geo.getLatitud()));
+                                Log.d("msg-test3", String.valueOf(geo.getLongitud()));*/
+                                listaGeo.add(geo);
+                                geoAdapter.setContext(getContext());
+                                geoAdapter.setListaGeo(listaGeo);
+                                binding.recyclerviewGeolocalizacion.setAdapter(geoAdapter);
+                                binding.recyclerviewGeolocalizacion.setLayoutManager(new LinearLayoutManager(getContext()));
 
-                                } else {
-                                    Log.d("msg-test", "error en la respuesta del webservice");
-                                }
+                            } else {
+                                Log.d("msg-test", "error en la respuesta del webservice");
                             }
+                        }
 
-                            @Override
-                            public void onFailure(Call<List<Geolocalizacion>> call, Throwable t) {
-                                t.printStackTrace();
-                            }
+                        @Override
+                        public void onFailure(Call<List<Geolocalizacion>> call, Throwable t) {
+                            t.printStackTrace();
+                        }
 
-                        });
-                    }else{
-                        Toast.makeText(getActivity(), "Ingrese una ciudad", Toast.LENGTH_SHORT).show();
-                    }
+                    });
+                } else {
+                    Toast.makeText(getActivity(), "Ingrese una ciudad", Toast.LENGTH_SHORT).show();
                 }
+            }
         });
 
-        /*Button goclima = getActivity().findViewById(R.id.button4);
+        Button goclima = getActivity().findViewById(R.id.button4);
 
         goclima.setOnClickListener( view -> {
             navController.navigate(R.id.action_geolocalizacionFragment_to_climaFragment);
-        });*/
-
-
+        });
 
             // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_geolocalizacion, container, false);
+        return binding.getRoot();
 
         /*Button goclima = findViewById(R.id.button4);
 

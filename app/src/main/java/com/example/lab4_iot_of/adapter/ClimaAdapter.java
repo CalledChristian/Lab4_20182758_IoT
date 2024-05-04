@@ -1,12 +1,9 @@
 package com.example.lab4_iot_of.adapter;
 
 import android.content.Context;
-import android.content.Intent;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -17,17 +14,15 @@ import com.example.lab4_iot_of.bean.Geolocalizacion;
 
 import java.util.List;
 
-public class GeolocalizacionAdapter extends RecyclerView.Adapter<GeolocalizacionAdapter.GeolocalViewHolder>{
+public class ClimaAdapter extends RecyclerView.Adapter<ClimaAdapter.ClimaViewHolder>{
     private Context context;
 
     private List<Geolocalizacion> listaGeo;
 
-
-
-    public class GeolocalViewHolder extends RecyclerView.ViewHolder{
+    public class ClimaViewHolder extends RecyclerView.ViewHolder{
 
         Geolocalizacion geolocalizacion;
-        public GeolocalViewHolder(@NonNull View itemView) {
+        public ClimaViewHolder(@NonNull View itemView) {
 
             super(itemView);
 
@@ -38,12 +33,12 @@ public class GeolocalizacionAdapter extends RecyclerView.Adapter<Geolocalizacion
     @NonNull
     @Override
     //Para inflar la vista
-    public GeolocalizacionAdapter.GeolocalViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.item_geo, parent, false);
-        return new GeolocalizacionAdapter.GeolocalViewHolder(view);
+    public ClimaAdapter.ClimaViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(context).inflate(R.layout.item_clima, parent, false);
+        return new ClimaAdapter.ClimaViewHolder(view);
     }
     @Override
-    public void onBindViewHolder(@NonNull GeolocalizacionAdapter.GeolocalViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ClimaAdapter.ClimaViewHolder holder, int position) {
 
 
         Geolocalizacion geo = listaGeo.get(position) ;
@@ -51,11 +46,11 @@ public class GeolocalizacionAdapter extends RecyclerView.Adapter<Geolocalizacion
         TextView ciudad = holder.itemView.findViewById(R.id.textView4);
         ciudad.setText(geo.getName());
         TextView latitud = holder.itemView.findViewById(R.id.textView5);
-        Log.d("msg-test4", String.valueOf(latitud));
-        latitud.setText("Lat: "+geo.getLat());
+        String latitudStr = String.valueOf(latitud);
+        latitud.setText(latitudStr);
         TextView longitud = holder.itemView.findViewById(R.id.textView6);
-        Log.d("msg-test4", String.valueOf(longitud));
-        longitud.setText("Lon: "+geo.getLon());
+        String longitudStr = String.valueOf(longitud);
+        latitud.setText(longitudStr);
 
         context = holder.itemView.getContext();
         /*ImageButton flecha1 = holder.itemView.findViewById(R.id.flecha1);

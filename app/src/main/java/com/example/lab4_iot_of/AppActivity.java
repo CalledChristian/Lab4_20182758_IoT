@@ -22,12 +22,12 @@ public class AppActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-        ActivityAppBinding binding;
+        //ActivityAppBinding binding;
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_app);
         Log.d("msg-test","ingresa a app activty");
-        Button goClima = findViewById(R.id.button4);
+        //Button goClima = findViewById(R.id.button4);
 
         /*if (savedInstanceState == null) {
             goClima.setOnClickListener(view-> {

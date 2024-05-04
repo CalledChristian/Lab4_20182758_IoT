@@ -6,6 +6,9 @@ import java.io.Serializable;
 
 public class Main implements Serializable {
 
+    @SerializedName("temp")
+    private float temperatura;
+
     @SerializedName("temp_min")
     private float temperaturaMinima;
 
@@ -27,5 +30,13 @@ public class Main implements Serializable {
 
     public void setTemperaturaMaxima(float temperaturaMaxima) {
         this.temperaturaMaxima = temperaturaMaxima;
+    }
+
+    public float getTemperatura() {
+        return temperatura;
+    }
+
+    public void setTemperatura(float temperatura) {
+        this.temperatura = temperatura;
     }
 }

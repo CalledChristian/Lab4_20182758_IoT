@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.lab4_iot_of.R;
+import com.example.lab4_iot_of.bean.Clima;
 import com.example.lab4_iot_of.bean.Geolocalizacion;
 
 import java.util.List;
@@ -17,11 +18,11 @@ import java.util.List;
 public class ClimaAdapter extends RecyclerView.Adapter<ClimaAdapter.ClimaViewHolder>{
     private Context context;
 
-    private List<Geolocalizacion> listaGeo;
+    private List<Clima> listaClima;
 
     public class ClimaViewHolder extends RecyclerView.ViewHolder{
 
-        Geolocalizacion geolocalizacion;
+        Clima clima;
         public ClimaViewHolder(@NonNull View itemView) {
 
             super(itemView);
@@ -41,16 +42,16 @@ public class ClimaAdapter extends RecyclerView.Adapter<ClimaAdapter.ClimaViewHol
     public void onBindViewHolder(@NonNull ClimaAdapter.ClimaViewHolder holder, int position) {
 
 
-        Geolocalizacion geo = listaGeo.get(position) ;
-        holder.geolocalizacion = geo;
+        Clima c = listaClima.get(position) ;
+        holder.clima = c;
         TextView ciudad = holder.itemView.findViewById(R.id.textView4);
-        ciudad.setText(geo.getName());
-        TextView latitud = holder.itemView.findViewById(R.id.textView5);
-        String latitudStr = String.valueOf(latitud);
-        latitud.setText(latitudStr);
-        TextView longitud = holder.itemView.findViewById(R.id.textView6);
-        String longitudStr = String.valueOf(longitud);
-        latitud.setText(longitudStr);
+        ciudad.setText(c.getCiudad());
+        TextView temp = holder.itemView.findViewById(R.id.textView8);
+        temp.setText(""+c.getMain().getTemperatura()+" K");
+        TextView tempMin = holder.itemView.findViewById(R.id.textView5);
+        tempMin.setText("Min: "+c.getMain().getTemperaturaMinima());
+        TextView tempMax = holder.itemView.findViewById(R.id.textView6);
+        tempMax.setText("Max: "+c.getMain().getTemperaturaMaxima());
 
         context = holder.itemView.getContext();
         /*ImageButton flecha1 = holder.itemView.findViewById(R.id.flecha1);
@@ -64,7 +65,7 @@ public class ClimaAdapter extends RecyclerView.Adapter<ClimaAdapter.ClimaViewHol
     public int getItemCount() {
         //Este método debe indicar la cantidad total de elementos, en nuestro caso, del
         //arreglo “data”.
-        return listaGeo.size();
+        return listaClima.size();
     }
 
     public Context getContext() {
@@ -75,11 +76,11 @@ public class ClimaAdapter extends RecyclerView.Adapter<ClimaAdapter.ClimaViewHol
         this.context = context;
     }
 
-    public List<Geolocalizacion> getListaGeo() {
-        return listaGeo;
+    public List<Clima> getListaClima() {
+        return listaClima;
     }
 
-    public void setListaGeo(List<Geolocalizacion> listaGeo) {
-        this.listaGeo = listaGeo;
+    public void setListaClima(List<Clima> listaClima) {
+        this.listaClima = listaClima;
     }
 }

@@ -3,10 +3,34 @@ package com.example.lab4_iot_of;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.fragment.NavHostFragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
+
+import com.example.lab4_iot_of.adapter.ClimaAdapter;
+import com.example.lab4_iot_of.adapter.GeolocalizacionAdapter;
+import com.example.lab4_iot_of.bean.Clima;
+import com.example.lab4_iot_of.bean.Geolocalizacion;
+import com.example.lab4_iot_of.databinding.FragmentClimaBinding;
+import com.example.lab4_iot_of.databinding.FragmentGeolocalizacionBinding;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -19,6 +43,22 @@ public class ClimaFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+
+    private FragmentClimaBinding binding;
+
+    private String latitudStr;
+
+    private String longitudStr;
+
+    private EditText ciudad;
+
+    private Button buscarButton;
+
+    private List<Clima> listaClima = new ArrayList<>();
+
+
+
+    private RecyclerView recyclerView;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -58,7 +98,69 @@ public class ClimaFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        binding = FragmentClimaBinding.inflate(inflater,container,false);
+
+        NavController navController = NavHostFragment.findNavController(ClimaFragment.this);
+
+
+        ClimaAdapter climaAdapter = new  ClimaAdapter();
+
+        ClimaInterface climaInterface = new Retrofit.Builder()
+                .baseUrl("https://api.openweathermap.org")
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
+                .create(ClimaInterface.class);
+
+        //inicio
+        binding.button5.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (binding.editTextText != null && binding.editTextText2 != null ) {
+                    latitudStr = binding.editTextText.getEditableText().toString();
+                    longitudStr = binding.editTextText2.getEditableText().toString();
+                    climaInterface.getClima(latitudStr, longitudStr, "792edf06f1f5ebcaf43632b55d8b03fe").enqueue(new Callback<List<Clima>>() {
+                        @Override
+                        public void onResponse(Call<List<Clima>> call, Response<List<Clima>> response) {
+                            if (response.isSuccessful()) {
+                                List<Clima> lista = response.body();
+                                Clima clima = lista.get(0);
+                                /*Log.d("msg-test3",geo.getCiudad());
+                                Log.d("msg-test3", String.valueOf(geo.getLatitud()));
+                                Log.d("msg-test3", String.valueOf(geo.getLongitud()));*/
+                                listaClima.add(clima);
+                                climaAdapter.setContext(getContext());
+                                climaAdapter.setListaClima(listaClima);
+                                binding.recyclerviewClima.setAdapter(climaAdapter);
+                                binding.recyclerviewClima.setLayoutManager(new LinearLayoutManager(getContext()));
+
+                            } else {
+                                Log.d("msg-test", "error en la respuesta del webservice");
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<List<Clima>> call, Throwable t) {
+                            t.printStackTrace();
+                        }
+
+                    });
+                } else {
+                    Toast.makeText(getActivity(), "Ingrese una ciudad", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+
+
+        //cambiar vista
+        Button goGeo = getActivity().findViewById(R.id.button3);
+
+        goGeo.setOnClickListener( view -> {
+            navController.navigate(R.id.action_climaFragment_to_geolocalizacionFragment);
+        });
+
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_clima, container, false);
+        return binding.getRoot();
     }
 }

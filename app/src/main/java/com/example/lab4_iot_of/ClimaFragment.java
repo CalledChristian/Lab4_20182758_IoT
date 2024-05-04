@@ -119,12 +119,13 @@ public class ClimaFragment extends Fragment {
 
             @Override
             public void onClick(View v) {
+                if (binding.editTextText4 != null && binding.editTextText5 != null) {
                     latitudStr = binding.editTextText4.getEditableText().toString();
                     longitudStr = binding.editTextText5.getEditableText().toString();
-                    Log.d("msg-test4",latitudStr);
-                    Log.d("msg-test4",longitudStr);
+                    Log.d("msg-test4", latitudStr);
+                    Log.d("msg-test4", longitudStr);
 
-                    climaInterface.getClima(latitudStr, longitudStr, "792edf06f1f5ebcaf43632b55d8b03fe").enqueue(new Callback<Clima>(){
+                    climaInterface.getClima(latitudStr, longitudStr, "792edf06f1f5ebcaf43632b55d8b03fe").enqueue(new Callback<Clima>() {
                         @Override
                         public void onResponse(Call<Clima> call, Response<Clima> response) {
                             if (response.isSuccessful()) {
@@ -151,6 +152,9 @@ public class ClimaFragment extends Fragment {
 
                     });
 
+                } else {
+                    Toast.makeText(getActivity(), "Ingrese la latitud y longitud", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 

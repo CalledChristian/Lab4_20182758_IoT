@@ -12,7 +12,8 @@
         tools:layout="@layout/fragment_geolocalizacion" >
         <action
             android:id="@+id/action_geolocalizacionFragment_to_climaFragment"
-            app:destination="@id/climaFragment" />
+            app:destination="@id/climaFragment"
+            />
     </fragment>
     <fragment
         android:id="@+id/climaFragment"
@@ -21,6 +22,8 @@
         tools:layout="@layout/fragment_clima" >
         <action
             android:id="@+id/action_climaFragment_to_geolocalizacionFragment"
-            app:destination="@id/geolocalizacionFragment" />
+            app:destination="@id/geolocalizacionFragment"
+            app:popUpTo="@id/geolocalizacionFragment"
+            app:popUpToInclusive="true"/>
     </fragment>
 </navigation>

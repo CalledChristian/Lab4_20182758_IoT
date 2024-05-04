@@ -5,16 +5,22 @@ import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.example.lab4_iot_of.adapter.GeolocalizacionAdapter;
 import com.example.lab4_iot_of.bean.Geolocalizacion;
 
+import java.util.Arrays;
 import java.util.List;
 
 import retrofit2.Call;
@@ -34,6 +40,16 @@ public class GeolocalizacionFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+
+    private String ciudadStr;
+
+    private EditText ciudad;
+
+    private Button buscarButton;
+
+    private List<Geolocalizacion> listaGeolocalizacion;
+
+    private RecyclerView recyclerView;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -74,10 +90,15 @@ public class GeolocalizacionFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        //datos
-        TextView ciudad = findViewById(R.id.textView4);
-        TextView latitud = findViewById(R.id.textView5);
-        TextView longitud = findViewById(R.id.textView6);
+
+        NavController navController = NavHostFragment.findNavController(GeolocalizacionFragment.this);
+
+
+        ciudad = getActivity().findViewById(R.id.editTextText2);
+        ciudadStr = ciudad.getEditableText().toString();
+        buscarButton = getActivity().findViewById(R.id.button2);
+        recyclerView = getActivity().findViewById(R.id.recyclerview_geolocalizacion);
+        GeolocalizacionAdapter geoAdapter = new GeolocalizacionAdapter();
 
         GeolocalizationInterface geolocalizationInterface = new Retrofit.Builder()
                 .baseUrl("https://api.openweathermap.org")
@@ -85,33 +106,47 @@ public class GeolocalizacionFragment extends Fragment {
                 .build()
                 .create(GeolocalizationInterface.class);
 
+        //inicio
+        buscarButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (!ciudadStr.isEmpty()) {
+                        geolocalizationInterface.getGeolocalizacion(ciudadStr, "1", "8dd6fc3be19ceb8601c2c3e811c16cf1").enqueue(new Callback<List<Geolocalizacion>>() {
+                            @Override
+                            public void onResponse(Call<List<Geolocalizacion>> call, Response<List<Geolocalizacion>> response) {
+                                if (response.isSuccessful()) {
+                                    List<Geolocalizacion> lista = response.body();
+                                    geoAdapter.setContext(getActivity());
+                                    geoAdapter.setListaGeo(lista);
+                                    recyclerView.setAdapter(geoAdapter);
+                                    recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        geolocalizationInterface.getGeolocalizacion(ciudad,"1","8dd6fc3be19ceb8601c2c3e811c16cf1").enqueue(new Callback<List<Geolocalizacion>>() {
-            @Override
-            public void onResponse(Call<List<Geolocalizacion>> call, Response<List<Geolocalizacion>> response) {
-                if(response.isSuccessful()) {
-                    List<Geolocalizacion> lista = response.body();
-                    Geolocalizacion geolocalizacion = lista.get(1);
-                    ciudad.setText(geolocalizacion.getCiudad());
-                    String latitudStr = String.valueOf(geolocalizacion.getLatitud());
-                    latitud.setText(latitudStr);
-                    String longitudStr = String.valueOf(geolocalizacion.getLongitud());
-                    longitud.setText(longitudStr);
+                                } else {
+                                    Log.d("msg-test", "error en la respuesta del webservice");
+                                }
+                            }
 
-                }else{
-                    Log.d("msg-test", "error en la respuesta del webservice");
+                            @Override
+                            public void onFailure(Call<List<Geolocalizacion>> call, Throwable t) {
+                                t.printStackTrace();
+                            }
+
+                        });
+                    }else{
+                        Toast.makeText(getActivity(), "Ingrese una ciudad", Toast.LENGTH_SHORT).show();
+                    }
                 }
-            }
-            @Override
-            public void onFailure(Call<List<Geolocalizacion>> call, Throwable t) {
-                t.printStackTrace();
-            }
-
-
         });
 
+        /*Button goclima = getActivity().findViewById(R.id.button4);
 
-        // Inflate the layout for this fragment
+        goclima.setOnClickListener( view -> {
+            navController.navigate(R.id.action_geolocalizacionFragment_to_climaFragment);
+        });*/
+
+
+
+            // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_geolocalizacion, container, false);
 
         /*Button goclima = findViewById(R.id.button4);

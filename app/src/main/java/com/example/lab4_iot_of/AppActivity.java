@@ -16,7 +16,7 @@ import com.example.lab4_iot_of.databinding.ActivityAppBinding;
 
 import java.util.List;
 
-public class AppActivity extends AppCompatActivity {
+public class AppActivity extends AppCompatActivity  {
 
 
     @Override

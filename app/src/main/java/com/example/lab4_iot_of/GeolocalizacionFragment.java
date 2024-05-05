@@ -1,15 +1,23 @@
 package com.example.lab4_iot_of;
 
+import android.content.Context;
+import android.content.Intent;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.provider.Settings;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -38,7 +46,12 @@ import retrofit2.converter.gson.GsonConverterFactory;
  * Use the {@link GeolocalizacionFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class GeolocalizacionFragment extends Fragment {
+public class GeolocalizacionFragment extends Fragment implements SensorEventListener{
+
+    public SensorManager mSensorManager ;
+
+    public Sensor mAccelerometer;
+
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -65,7 +78,7 @@ public class GeolocalizacionFragment extends Fragment {
 
     private RecyclerView recyclerView;
 
-    private FragmentGeolocalizacionBinding binding;
+    public FragmentGeolocalizacionBinding binding;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -107,6 +120,9 @@ public class GeolocalizacionFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         binding = FragmentGeolocalizacionBinding.inflate(inflater,container,false);
+
+        mSensorManager = (SensorManager) requireActivity().getSystemService(Context.SENSOR_SERVICE);
+
 
 
 
@@ -185,6 +201,66 @@ public class GeolocalizacionFragment extends Fragment {
         return binding.getRoot();
 
         }
+
+        @Override
+        public void onAccuracyChanged(Sensor sensor, int i) {
+
+        }
+
+
+        @Override
+        public void onResume() {
+            super.onResume();
+            if (mSensorManager != null) {
+                mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+                if (mAccelerometer != null) {
+                    mSensorManager.registerListener(this, mAccelerometer, SensorManager.SENSOR_DELAY_UI);
+                }
+            }
+        }
+        @Override
+        public void onStop() {
+            super.onStop();
+            mSensorManager.unregisterListener(this);
+        }
+
+        @Override
+        public void onSensorChanged(SensorEvent sensorEvent) {
+
+        //Se debe validar qué sensor está enviando la información pues se puede tener un
+        //listener para todos los sensores.
+
+            int sensorType = sensorEvent.sensor.getType();
+
+            if(sensorType == Sensor.TYPE_ACCELEROMETER) {
+
+                //datos acelerometro
+                float x = sensorEvent.values[0];
+                float y = sensorEvent.values[1];
+                float z = sensorEvent.values[2];
+                float aceleracionTotal = (float) Math.sqrt(x * x + y * y + z * z);
+                LinearLayoutManager layoutManager = (LinearLayoutManager) binding.recyclerviewGeolocalizacion.getLayoutManager();
+
+               // AlertDialog.Builder alertDialog = new AlertDialog.Builder(getContext());
+
+                if (aceleracionTotal > 15.0 && binding.recyclerviewGeolocalizacion.getAdapter() != null) {
+                    //Toast.makeText(getContext(), "Su velocidad: " + aceleracionTotal + " m/s^2", Toast.LENGTH_SHORT).show();
+                    AlertDialog.Builder alertDialog = new AlertDialog.Builder(getContext());
+                    alertDialog.setMessage("Deshacer Acción");
+                    alertDialog.setPositiveButton("Deshacer", (dialogInterface, i) -> {
+                        int lastPosition = layoutManager.getItemCount() - 1;
+                        binding.recyclerviewGeolocalizacion.smoothScrollToPosition(lastPosition);
+                    });
+
+                    alertDialog.setNegativeButton("Cancelar", ((dialogInterface, i) -> {
+                        Log.d("msg-test", "Cancelado");
+                    }));
+
+                    alertDialog.show();
+                }
+            }
+        }
+
 
         /*@Override
         public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {

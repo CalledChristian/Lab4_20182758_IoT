@@ -46,9 +46,9 @@ import retrofit2.converter.gson.GsonConverterFactory;
  * Use the {@link GeolocalizacionFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class GeolocalizacionFragment extends Fragment implements SensorEventListener{
+public class GeolocalizacionFragment extends Fragment implements SensorEventListener {
 
-    public SensorManager mSensorManager ;
+    public SensorManager mSensorManager;
 
     public Sensor mAccelerometer;
 
@@ -72,8 +72,6 @@ public class GeolocalizacionFragment extends Fragment implements SensorEventList
     private List<Geolocalizacion> listaGeo = new ArrayList<>();
 
     private LinearLayoutManager layoutManager;
-
-
 
 
     private RecyclerView recyclerView;
@@ -119,15 +117,12 @@ public class GeolocalizacionFragment extends Fragment implements SensorEventList
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        binding = FragmentGeolocalizacionBinding.inflate(inflater,container,false);
+        binding = FragmentGeolocalizacionBinding.inflate(inflater, container, false);
 
         mSensorManager = (SensorManager) requireActivity().getSystemService(Context.SENSOR_SERVICE);
 
 
-
-
-
-        Log.d("msg-test2","ingresa a fragment");
+        Log.d("msg-test2", "ingresa a fragment");
 
 
         NavController navController = NavHostFragment.findNavController(GeolocalizacionFragment.this);
@@ -184,7 +179,7 @@ public class GeolocalizacionFragment extends Fragment implements SensorEventList
 
         Button goclima = getActivity().findViewById(R.id.button4);
 
-        goclima.setOnClickListener( view -> {
+        goclima.setOnClickListener(view -> {
             navController.navigate(R.id.action_geolocalizacionFragment_to_climaFragment);
         });
 
@@ -200,64 +195,68 @@ public class GeolocalizacionFragment extends Fragment implements SensorEventList
         // Inflate the layout for this fragment
         return binding.getRoot();
 
-        }
+    }
 
-        @Override
-        public void onAccuracyChanged(Sensor sensor, int i) {
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int i) {
 
-        }
+    }
 
 
-        @Override
-        public void onResume() {
-            super.onResume();
-            if (mSensorManager != null) {
-                mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-                if (mAccelerometer != null) {
-                    mSensorManager.registerListener(this, mAccelerometer, SensorManager.SENSOR_DELAY_UI);
-                }
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (mSensorManager != null) {
+            mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+            if (mAccelerometer != null) {
+                mSensorManager.registerListener(this, mAccelerometer, SensorManager.SENSOR_DELAY_UI);
             }
         }
-        @Override
-        public void onStop() {
-            super.onStop();
-            mSensorManager.unregisterListener(this);
-        }
+    }
 
-        @Override
-        public void onSensorChanged(SensorEvent sensorEvent) {
+    @Override
+    public void onStop() {
+        super.onStop();
+        mSensorManager.unregisterListener(this);
+    }
+
+    @Override
+    public void onSensorChanged(SensorEvent sensorEvent) {
 
         //Se debe validar qué sensor está enviando la información pues se puede tener un
         //listener para todos los sensores.
 
-            int sensorType = sensorEvent.sensor.getType();
+        int sensorType = sensorEvent.sensor.getType();
 
-            if(sensorType == Sensor.TYPE_ACCELEROMETER) {
+        if (sensorType == Sensor.TYPE_ACCELEROMETER) {
 
-                //datos acelerometro
-                float x = sensorEvent.values[0];
-                float y = sensorEvent.values[1];
-                float z = sensorEvent.values[2];
-                float aceleracionTotal = (float) Math.sqrt(x * x + y * y + z * z);
-                LinearLayoutManager layoutManager = (LinearLayoutManager) binding.recyclerviewGeolocalizacion.getLayoutManager();
+            //datos acelerometro
+            float x = sensorEvent.values[0];
+            float y = sensorEvent.values[1];
+            float z = sensorEvent.values[2];
+            float aceleracionTotal = (float) Math.sqrt(x * x + y * y + z * z);
+            LinearLayoutManager layoutManager = (LinearLayoutManager) binding.recyclerviewGeolocalizacion.getLayoutManager();
 
-               // AlertDialog.Builder alertDialog = new AlertDialog.Builder(getContext());
 
-                if (aceleracionTotal > 15.0 && binding.recyclerviewGeolocalizacion.getAdapter() != null) {
-                    //Toast.makeText(getContext(), "Su velocidad: " + aceleracionTotal + " m/s^2", Toast.LENGTH_SHORT).show();
-                    AlertDialog.Builder alertDialog = new AlertDialog.Builder(getContext());
-                    alertDialog.setMessage("Deshacer Acción");
-                    alertDialog.setPositiveButton("Deshacer", (dialogInterface, i) -> {
-                        int lastPosition = layoutManager.getItemCount() - 1;
-                        binding.recyclerviewGeolocalizacion.smoothScrollToPosition(lastPosition);
-                    });
+            AlertDialog.Builder alertDialog = new AlertDialog.Builder(getContext());
+            if (aceleracionTotal > 15.0 && binding.recyclerviewGeolocalizacion.getAdapter() != null) {
+                //AlertDialog.Builder alertDialog = new AlertDialog.Builder(getContext());
+                alertDialog.setMessage("Deshacer Acción");
+                alertDialog.setPositiveButton("Deshacer", (dialogInterface, i) -> {
+                    listaGeo.remove(scrollPosition);
+                    binding.recyclerviewGeolocalizacion.removeViewAt(scrollPosition);
+                    geoAdapter.notifyDataSetChanged();
+                });
 
-                    alertDialog.setNegativeButton("Cancelar", ((dialogInterface, i) -> {
-                        Log.d("msg-test", "Cancelado");
-                    }));
+                alertDialog.setNegativeButton("Cancelar", ((dialogInterface, i) -> {
+                    Log.d("msg-test", "Cancelado");
+                }));
 
+                if (!alertDialog.show().isShowing()) {
                     alertDialog.show();
+
                 }
+
             }
         }
 
@@ -338,5 +337,5 @@ public class GeolocalizacionFragment extends Fragment implements SensorEventList
         }*/
 
 
-
+    }
 }
